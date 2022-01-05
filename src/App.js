@@ -30,7 +30,7 @@ function Box({ color, size, scale, children, ...rest }) {
 }
 
 const Scene = () => {
-  const fbx = useFBX("black.fbx");
+  const fbx = useFBX("gun.fbx");
 
   return <primitive object={fbx} scale={0.005} />;
 };
@@ -64,7 +64,7 @@ function VButton(props) {
 
 function RButton(props) {
   const [hover, setHover] = useState(false);
-  const [color, setColor] = useState < any > "blue";
+  const [color, setColor] = useState("blue");
 
   const onSelect = () => {
     setColor((Math.random() * 0xffffff) | 0);
@@ -89,25 +89,27 @@ function RButton(props) {
 }
 
 export default function App() {
+  const AR = false;
   return (
-    <>
-      <VRCanvas>
-        <Suspense fallback={null}>
+    <Suspense fallback={null}>
+      {AR ? (
+        <ARCanvas>
+          <ambientLight />
+          <pointLight position={[10, 10, 10]} />
+          <RButton position={[0, 0.1, -0.2]} />
+          <DefaultXRControllers />
+        </ARCanvas>
+      ) : (
+        <VRCanvas>
           <OrbitControls />
           <Sky sunPosition={[0, 1, 0]} />
           <Floor />
           <ambientLight />
           <pointLight position={[10, 10, 10]} />
-          <VButton position={[0, 0.8, -1]} />
+          <VButton position={[0, 1.8, -1]} />
           <DefaultXRControllers />
-        </Suspense>
-      </VRCanvas>
-      <ARCanvas>
-        <ambientLight />
-        <pointLight position={[10, 10, 10]} />
-        <Button position={[0, 0.1, -0.2]} />
-        <DefaultXRControllers />
-      </ARCanvas>
-    </>
+        </VRCanvas>
+      )}
+    </Suspense>
   );
 }
