@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { VRCanvas, Interactive, DefaultXRControllers } from "@react-three/xr";
+import {
+  ARCanvas,
+  VRCanvas,
+  Interactive,
+  DefaultXRControllers,
+} from "@react-three/xr";
 import { Sky, useFBX, Text, OrbitControls } from "@react-three/drei";
 import "@react-three/fiber";
 import { Suspense } from "react";
@@ -30,7 +35,7 @@ const Scene = () => {
   return <primitive object={fbx} scale={0.005} />;
 };
 
-function Button(props) {
+function VButton(props) {
   const [hover, setHover] = useState(false);
   const [color, setColor] = useState(0x123456);
 
@@ -44,7 +49,6 @@ function Button(props) {
       onHover={() => setHover(true)}
       onBlur={() => setHover(false)}
     >
-      {/* <Scene /> */}
       <OrbitControls />
       <Box
         color={color}
@@ -52,15 +56,32 @@ function Button(props) {
         size={[0, 0, 0]}
         {...props}
       >
-        {/* <Text
-          position={[0, 0, 0.06]}
-          fontSize={0.05}
-          color="#000"
-          anchorX="center"
-          anchorY="middle"
-        >
-          Hello react-xr!
-        </Text> */}
+        <Scene />
+      </Box>
+    </Interactive>
+  );
+}
+
+function RButton(props) {
+  const [hover, setHover] = useState(false);
+  const [color, setColor] = useState < any > "blue";
+
+  const onSelect = () => {
+    setColor((Math.random() * 0xffffff) | 0);
+  };
+
+  return (
+    <Interactive
+      onHover={() => setHover(true)}
+      onBlur={() => setHover(false)}
+      onSelect={onSelect}
+    >
+      <Box
+        color={color}
+        scale={hover ? [0.6, 0.6, 0.6] : [0.5, 0.5, 0.5]}
+        size={[0, 0, 0]}
+        {...props}
+      >
         <Scene />
       </Box>
     </Interactive>
@@ -69,16 +90,24 @@ function Button(props) {
 
 export default function App() {
   return (
-    <VRCanvas>
-      <Suspense fallback={null}>
-        <OrbitControls />
-        <Sky sunPosition={[0, 1, 0]} />
-        <Floor />
+    <>
+      <VRCanvas>
+        <Suspense fallback={null}>
+          <OrbitControls />
+          <Sky sunPosition={[0, 1, 0]} />
+          <Floor />
+          <ambientLight />
+          <pointLight position={[10, 10, 10]} />
+          <VButton position={[0, 0.8, -1]} />
+          <DefaultXRControllers />
+        </Suspense>
+      </VRCanvas>
+      <ARCanvas>
         <ambientLight />
         <pointLight position={[10, 10, 10]} />
+        <Button position={[0, 0.1, -0.2]} />
         <DefaultXRControllers />
-        <Button position={[0, 0.8, -1]} />
-      </Suspense>
-    </VRCanvas>
+      </ARCanvas>
+    </>
   );
 }
